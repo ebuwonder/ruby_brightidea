@@ -1,0 +1,42 @@
+  <h5>Hi <%= current_user.name.capitalize %>!</h5>
+  <br>
+  <div class="form-inline">
+     <form action="/ideas/<%= current_user.id %>" method="post">
+        <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" />
+
+        <textarea class="form-control" placeholder="Post something witty here..." rows="1" cols="80" name="content"></textarea>
+
+        <button type="submit" class="btn btn-primary">Idea!</button>
+     </form>
+
+  </div>
+
+  <br>
+
+      <% @ideas.each do |idea|%>
+      <label><a href='/users/<%= idea.user.id %>'><%= idea.user.name.capitalize %></a> says: <%= idea.content %></p></label>
+      <% if idea.user == current_user %>
+      <form action='/ideas/<%= idea.id %>' method='post'>
+         <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+         <input type="hidden" name="_method" value="delete">
+         <button type="submit" class="btn btn-danger">Delete</button>
+      </form>
+
+      <% end %>
+
+      <p><a  href='/ideas/<%= idea.id %>'><%= idea.likes.count %> People</a> like this</p>
+      <% if idea.users.include?(current_user) %>
+
+         <form action='/ideas/<%= idea.id %>/destroy' method='post'>
+            <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+            <input type="hidden" name="_method" value="delete">
+            <button  type="submit" class="btn btn-primary">Unlike</button>
+         </form>
+      <% else %>
+         <form action='/ideas/<%= idea.id %>/create' method='post'>
+            <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+            <button type="submit" class="btn btn-primary">Like</button>
+         </form>
+      <% end %>
+          <hr>
+      <% end %>
